@@ -1,23 +1,21 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import {
-  Github,
-  Slack,
   Network,
   Users,
   Zap,
   Paperclip,
   Bell,
-  CheckCircle,
+  CircleCheck,
   Calendar,
   LayoutGrid,
   Folder,
   ArrowUp,
   ArrowRight,
-  Flame,
-  Cloud,
   Code2,
   Sparkles,
 } from "lucide-react";
+import { FaGithub, FaSlack, FaAws, FaFirefoxBrowser } from "react-icons/fa6";
+// import { SiVisualstudiocode } from "react-icons/si";
 
 /* ------------------------------------------------------------------ */
 /*  Social brand icons — inline SVG + path                             */
@@ -321,7 +319,7 @@ function ThingsYouCanDo() {
     { el: <Zap className="w-6 h-6" />, c: "text-green-400" },
     { el: <Paperclip className="w-6 h-6" />, c: "text-pink-400", active: true },
     { el: <Bell className="w-6 h-6" />, c: "text-yellow-400" },
-    { el: <CheckCircle className="w-6 h-6" />, c: "text-orange-400" },
+    { el: <CircleCheck className="w-6 h-6" />, c: "text-orange-400" },
     { el: <Calendar className="w-6 h-6" />, c: "text-emerald-400" },
     { el: <LayoutGrid className="w-6 h-6" />, c: "text-purple-400" },
     { el: <Folder className="w-6 h-6" />, c: "text-red-500" },
@@ -402,19 +400,23 @@ function ExistingStack() {
         {/* orbiting integration logos */}
         <div className="relative h-72">
           <div className="absolute left-[10%] top-[10%]">
-            <StackOrb icon={<Github className="w-5 h-5 text-white/80" />} />
+            <StackOrb icon={<FaGithub className="w-5 h-5 text-white/80" />} />
           </div>
           <div className="absolute left-[42%] top-0">
-            <StackOrb icon={<Slack className="w-5 h-5 text-[#e01e5a]" />} />
+            <StackOrb icon={<FaSlack className="w-5 h-5 text-[#e01e5a]" />} />
           </div>
           <div className="absolute right-[6%] top-[12%]">
-            <StackOrb icon={<Flame className="w-5 h-5 text-orange-500" />} />
+            <StackOrb
+              icon={<FaFirefoxBrowser className="w-5 h-5 text-orange-500" />}
+            />
           </div>
-          <div className="absolute left-[6%] top-[50%]">
-            <StackOrb icon={<Code2 className="w-5 h-5 text-blue-400" />} />
-          </div>
+          {/* <div className="absolute left-[6%] top-[50%]">
+            <StackOrb
+              icon={<SiVisualstudiocode className="w-5 h-5 text-blue-400" />}
+            />
+          </div> */}
           <div className="absolute left-[44%] top-[48%]">
-            <StackOrb icon={<Cloud className="w-5 h-5 text-orange-300" />} />
+            <StackOrb icon={<FaAws className="w-5 h-5 text-orange-300" />} />
           </div>
           <div className="absolute right-[8%] top-[52%]">
             <StackOrb icon={<Sparkles className="w-5 h-5 text-red-500" />} />
@@ -574,7 +576,7 @@ function ConnectedSection() {
                 key={i}
                 className="flex items-start gap-2.5 text-white/65 font-mono-jb text-[12px]"
               >
-                <CheckCircle className="w-4 h-4 text-white/40 shrink-0 mt-0.5" />
+                <CircleCheck className="w-4 h-4 text-white/40 shrink-0 mt-0.5" />
                 {c}
               </li>
             ))}
@@ -726,9 +728,9 @@ function Footer() {
 /* ------------------------------------------------------------------ */
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#1c1c1c] py-6 px-3 sm:px-6">
+    <div className="min-h-screen bg-[#1c1c1c]">
       <Fonts />
-      <div className="max-w-6xl mx-auto">
+      <div>
         <Hero />
         <TrustedBy />
         <FeatureText />
