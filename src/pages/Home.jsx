@@ -1,4 +1,4 @@
-// import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Network,
   Users,
@@ -15,7 +15,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { FaGithub, FaSlack, FaAws, FaFirefoxBrowser } from "react-icons/fa6";
-// import { SiVisualstudiocode } from "react-icons/si";
 
 /* ------------------------------------------------------------------ */
 /*  Social brand icons — inline SVG + path                             */
@@ -66,7 +65,7 @@ const GlobeIcon = (props) => (
 );
 
 /* ------------------------------------------------------------------ */
-/*  Fonts                                                              */
+/*  Fonts + motion                                                     */
 /* ------------------------------------------------------------------ */
 const Fonts = () => (
   <style>{`
@@ -79,6 +78,7 @@ const Fonts = () => (
       to   { transform: translateX(-50%); }
     }
     .animate-marquee { animation: marquee 28s linear infinite; }
+    .marquee-wrap:hover .animate-marquee { animation-play-state: paused; }
 
     @keyframes floaty {
       0%,100% { transform: translateY(0); }
@@ -86,16 +86,77 @@ const Fonts = () => (
     }
     .floaty { animation: floaty 5s ease-in-out infinite; }
 
+    /* scroll reveal */
+    @keyframes fadeUp {
+      0%   { opacity: 0; transform: translateY(18px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; }
+    .reveal.in { animation: fadeUp 0.7s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    /* hero load stagger */
+    @keyframes heroIn {
+      0%   { opacity: 0; transform: translateY(22px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .hero-in { opacity: 0; animation: heroIn 0.8s cubic-bezier(.2,.7,.2,1) forwards; }
+
+    /* gentle pulse for the hub tile */
+    @keyframes hubPulse {
+      0%,100% { box-shadow: 0 0 24px rgba(255,255,255,0.18); }
+      50%     { box-shadow: 0 0 38px rgba(255,255,255,0.40); }
+    }
+    .hub-pulse { animation: hubPulse 3s ease-in-out infinite; }
+
     ::selection { background: #ff5722; color: #000; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .hero-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+      .animate-marquee, .floaty, .hub-pulse { animation: none !important; }
+    }
   `}</style>
 );
+
+/* ------------------------------------------------------------------ */
+/*  Reveal-on-scroll wrapper                                           */
+/* ------------------------------------------------------------------ */
+function Reveal({ children, className = "" }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={`reveal ${shown ? "in" : ""} ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+/* shared button styles with hover lift */
+const btnBase =
+  "transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 will-change-transform";
 
 /* ------------------------------------------------------------------ */
 /*  Small helpers                                                      */
 /* ------------------------------------------------------------------ */
 const ChartLabel = ({ children, className = "" }) => (
   <div
-    className={`absolute flex flex-col items-center text-white/55 ${className}`}
+    className={`absolute flex flex-col items-center text-white/55 transition-colors duration-300 hover:text-white/90 ${className}`}
   >
     <span className="text-[10px] sm:text-[11px] font-mono-jb tracking-wide whitespace-nowrap mb-1">
       {children}
@@ -152,19 +213,25 @@ function Hero() {
 
       {/* NAV */}
       <header className="relative z-20 flex items-center justify-between px-6 sm:px-10 pt-7">
-        <div className="grid grid-cols-2 gap-[3px]">
+        <div className="grid grid-cols-2 gap-[3px] transition-transform duration-500 hover:rotate-90">
           {[0, 1, 2, 3].map((i) => (
             <span key={i} className="w-2 h-2 bg-white/90 rounded-[1px]" />
           ))}
         </div>
         <nav className="hidden md:flex items-center gap-7 text-[13px] font-mono-jb text-white/70">
           {navItems.map((n) => (
-            <a key={n} href="#" className="hover:text-white transition-colors">
+            <a
+              key={n}
+              href="#"
+              className="relative hover:text-white transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-white after:transition-all after:duration-300 hover:after:w-full"
+            >
               {n}
             </a>
           ))}
         </nav>
-        <button className="bg-[#161616] hover:bg-[#222] border border-white/10 text-white text-[13px] font-mono-jb px-4 py-2 rounded-md transition-colors">
+        <button
+          className={`bg-[#161616] hover:bg-[#222] border border-white/10 hover:border-white/25 text-white text-[13px] font-mono-jb px-4 py-2 rounded-md ${btnBase}`}
+        >
           Get Started
         </button>
       </header>
@@ -190,22 +257,35 @@ function Hero() {
 
       {/* HERO COPY */}
       <div className="relative z-10 flex flex-col items-center text-center px-6 pt-16 pb-40 sm:pt-20 sm:pb-56">
-        <h1 className="font-mono-jb text-white text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.12] tracking-tight">
+        <h1
+          className="hero-in font-mono-jb text-white text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.12] tracking-tight"
+          style={{ animationDelay: "0.05s" }}
+        >
           Your Work.
           <br />
           One Dashboard.
           <br />
           Zero Chaos.
         </h1>
-        <p className="mt-6 text-white/60 font-mono-jb text-sm sm:text-[15px] max-w-md leading-relaxed">
+        <p
+          className="hero-in mt-6 text-white/60 font-mono-jb text-sm sm:text-[15px] max-w-md leading-relaxed"
+          style={{ animationDelay: "0.2s" }}
+        >
           One simple platform to manage your team, tasks, and workflows — all in
           one place.
         </p>
-        <div className="mt-8 flex items-center gap-3">
-          <button className="bg-white hover:bg-white/90 text-black text-sm font-mono-jb px-6 py-2.5 rounded-md transition-colors">
+        <div
+          className="hero-in mt-8 flex items-center gap-3"
+          style={{ animationDelay: "0.35s" }}
+        >
+          <button
+            className={`bg-white hover:bg-white/90 text-black text-sm font-mono-jb px-6 py-2.5 rounded-md hover:shadow-lg hover:shadow-white/10 ${btnBase}`}
+          >
             Get Started
           </button>
-          <button className="bg-white/10 hover:bg-white/15 text-white border border-white/10 text-sm font-mono-jb px-6 py-2.5 rounded-md transition-colors">
+          <button
+            className={`bg-white/10 hover:bg-white/15 text-white border border-white/10 hover:border-white/25 text-sm font-mono-jb px-6 py-2.5 rounded-md ${btnBase}`}
+          >
             Learn More
           </button>
         </div>
@@ -233,12 +313,12 @@ function TrustedBy() {
       <p className="text-center font-mono-jb text-white/80 text-lg mb-8">
         Trusted By
       </p>
-      <div className="relative overflow-hidden">
+      <div className="marquee-wrap relative overflow-hidden">
         <div className="flex w-max animate-marquee gap-14 px-8">
           {row.map((l, i) => (
             <div
               key={i}
-              className="flex items-center gap-2 text-white/35 font-mono-jb text-base whitespace-nowrap"
+              className="flex items-center gap-2 text-white/35 hover:text-white/80 transition-colors duration-300 font-mono-jb text-base whitespace-nowrap cursor-default"
             >
               {l.icon}
               {l.name}
@@ -279,7 +359,7 @@ function FeatureText() {
         />
       </div>
 
-      <div className="relative z-10 max-w-2xl mx-auto font-mono-jb text-xl sm:text-2xl leading-relaxed">
+      <Reveal className="relative z-10 max-w-2xl mx-auto font-mono-jb text-xl sm:text-2xl leading-relaxed">
         <p className="text-white">
           If a task moves in <span className="text-pink-400">one place</span>,
           it moves everywhere. Use built-in triggers to automate{" "}
@@ -304,7 +384,7 @@ function FeatureText() {
         <p className="text-white/45 mt-6">
           No more guessing if a project is on track.
         </p>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -330,14 +410,14 @@ function ThingsYouCanDo() {
       <h2 className="text-center font-mono-jb text-white text-xl sm:text-2xl mb-14">
         Things You Can Do With Brand
       </h2>
-      <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+      <Reveal className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
         {icons.map((ic, i) => (
-          <div key={i} className="relative flex flex-col items-center">
+          <div key={i} className="group relative flex flex-col items-center">
             <div
-              className={`w-12 h-12 flex items-center justify-center rounded-xl ${ic.c} ${
+              className={`w-12 h-12 flex items-center justify-center rounded-xl cursor-pointer transition-all duration-300 group-hover:-translate-y-1.5 group-hover:scale-110 ${ic.c} ${
                 ic.active
                   ? "bg-pink-500/15 ring-1 ring-pink-500/50 shadow-[0_0_25px_rgba(236,72,153,0.4)]"
-                  : ""
+                  : "group-hover:bg-white/5 group-hover:shadow-[0_0_22px_rgba(255,255,255,0.10)]"
               }`}
             >
               {ic.el}
@@ -349,7 +429,7 @@ function ThingsYouCanDo() {
             )}
           </div>
         ))}
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -357,12 +437,15 @@ function ThingsYouCanDo() {
 /* ------------------------------------------------------------------ */
 /*  EXISTING STACK                                                     */
 /* ------------------------------------------------------------------ */
-function StackOrb({ icon, className = "" }) {
+function StackOrb({ icon, delay = 0 }) {
   return (
     <div
-      className={`floaty w-12 h-12 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur flex items-center justify-center ${className}`}
+      className="floaty group w-12 h-12 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur flex items-center justify-center transition-colors duration-300 hover:border-white/30 hover:bg-white/[0.07] hover:shadow-[0_0_24px_rgba(255,120,40,0.30)]"
+      style={{ animationDelay: `${delay}s` }}
     >
-      {icon}
+      <span className="transition-transform duration-300 group-hover:scale-125">
+        {icon}
+      </span>
     </div>
   );
 }
@@ -381,7 +464,7 @@ function ExistingStack() {
         />
       </div>
 
-      <div className="relative z-10 grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto">
+      <Reveal className="relative z-10 grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto">
         <div>
           <h2 className="font-mono-jb text-3xl sm:text-4xl text-white">
             Your Existing Stack,{" "}
@@ -392,7 +475,9 @@ function ExistingStack() {
             Plays well with others. Connect Flowpilot to the tools your team
             already uses to eliminate context switching.
           </p>
-          <button className="mt-7 bg-white hover:bg-white/90 text-black text-sm font-mono-jb px-6 py-2.5 rounded-md transition-colors">
+          <button
+            className={`mt-7 bg-white hover:bg-white/90 text-black text-sm font-mono-jb px-6 py-2.5 rounded-md hover:shadow-lg hover:shadow-white/10 ${btnBase}`}
+          >
             Get Started
           </button>
         </div>
@@ -400,38 +485,58 @@ function ExistingStack() {
         {/* orbiting integration logos */}
         <div className="relative h-72">
           <div className="absolute left-[10%] top-[10%]">
-            <StackOrb icon={<FaGithub className="w-5 h-5 text-white/80" />} />
+            <StackOrb
+              icon={<FaGithub className="w-5 h-5 text-white/80" />}
+              delay={0}
+            />
           </div>
           <div className="absolute left-[42%] top-0">
-            <StackOrb icon={<FaSlack className="w-5 h-5 text-[#e01e5a]" />} />
+            <StackOrb
+              icon={<FaSlack className="w-5 h-5 text-[#e01e5a]" />}
+              delay={0.6}
+            />
           </div>
           <div className="absolute right-[6%] top-[12%]">
             <StackOrb
               icon={<FaFirefoxBrowser className="w-5 h-5 text-orange-500" />}
+              delay={1.2}
             />
           </div>
-          {/* <div className="absolute left-[6%] top-[50%]">
+          <div className="absolute left-[6%] top-[50%]">
             <StackOrb
-              icon={<SiVisualstudiocode className="w-5 h-5 text-blue-400" />}
+              icon={<Code2 className="w-5 h-5 text-blue-400" />}
+              delay={0.9}
             />
-          </div> */}
+          </div>
           <div className="absolute left-[44%] top-[48%]">
-            <StackOrb icon={<FaAws className="w-5 h-5 text-orange-300" />} />
+            <StackOrb
+              icon={<FaAws className="w-5 h-5 text-orange-300" />}
+              delay={0.3}
+            />
           </div>
           <div className="absolute right-[8%] top-[52%]">
-            <StackOrb icon={<Sparkles className="w-5 h-5 text-red-500" />} />
+            <StackOrb
+              icon={<Sparkles className="w-5 h-5 text-red-500" />}
+              delay={1.5}
+            />
           </div>
           <div className="absolute left-[28%] bottom-0">
-            <StackOrb icon={<Sparkles className="w-5 h-5 text-orange-400" />} />
+            <StackOrb
+              icon={<Sparkles className="w-5 h-5 text-orange-400" />}
+              delay={0.45}
+            />
           </div>
           <div className="absolute right-[24%] bottom-[2%]">
-            <StackOrb icon={<Code2 className="w-5 h-5 text-blue-500" />} />
+            <StackOrb
+              icon={<Code2 className="w-5 h-5 text-blue-500" />}
+              delay={1.1}
+            />
           </div>
           {/* connecting dots */}
           <div className="absolute left-[33%] top-[8%] w-1 h-1 rounded-full bg-white/30" />
           <div className="absolute right-[28%] top-[16%] w-1 h-1 rounded-full bg-white/30" />
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -495,20 +600,22 @@ function HowItWorks() {
           <div className="absolute left-1 top-2 bottom-2 w-px bg-white/15" />
           <div className="space-y-5">
             {steps.map((s, i) => (
-              <div key={i} className="relative">
-                <span className="absolute -left-[26px] top-3 w-2 h-2 rounded-full bg-white" />
-                <div className="bg-white rounded-md p-5 shadow-xl">
-                  <p className="text-[10px] font-mono-jb text-orange-500 tracking-widest">
-                    {s.n}
-                  </p>
-                  <h3 className="mt-2 font-mono-jb text-[15px] font-semibold text-neutral-900">
-                    {s.t}
-                  </h3>
-                  <p className="mt-2 text-[12px] leading-relaxed text-neutral-500 font-mono-jb">
-                    {s.d}
-                  </p>
+              <Reveal key={i}>
+                <div className="group relative">
+                  <span className="absolute -left-[26px] top-3 w-2 h-2 rounded-full bg-white transition-all duration-300 group-hover:scale-150 group-hover:bg-orange-400 group-hover:shadow-[0_0_10px_rgba(251,146,60,0.8)]" />
+                  <div className="bg-white rounded-md p-5 shadow-xl transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl group-hover:ring-1 group-hover:ring-orange-400/40">
+                    <p className="text-[10px] font-mono-jb text-orange-500 tracking-widest">
+                      {s.n}
+                    </p>
+                    <h3 className="mt-2 font-mono-jb text-[15px] font-semibold text-neutral-900">
+                      {s.t}
+                    </h3>
+                    <p className="mt-2 text-[12px] leading-relaxed text-neutral-500 font-mono-jb">
+                      {s.d}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -552,7 +659,7 @@ function ConnectedSection() {
         />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur p-8 sm:p-10 grid md:grid-cols-2 gap-10">
+      <Reveal className="relative z-10 max-w-5xl mx-auto rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur p-8 sm:p-10 grid md:grid-cols-2 gap-10 transition-colors duration-300 hover:border-white/20">
         <div>
           <h2 className="font-mono-jb text-3xl sm:text-[2.1rem] leading-tight text-white">
             Connected to everything. Dependent on nothing.
@@ -562,10 +669,14 @@ function ConnectedSection() {
             your team already lives — no new tabs, no new workflows.
           </p>
           <div className="mt-6 flex items-center gap-3">
-            <button className="bg-white hover:bg-white/90 text-black text-sm font-mono-jb px-5 py-2 rounded-md transition-colors">
+            <button
+              className={`bg-white hover:bg-white/90 text-black text-sm font-mono-jb px-5 py-2 rounded-md hover:shadow-lg hover:shadow-white/10 ${btnBase}`}
+            >
               Get Started
             </button>
-            <button className="bg-white/10 hover:bg-white/15 text-white border border-white/10 text-sm font-mono-jb px-5 py-2 rounded-md transition-colors">
+            <button
+              className={`bg-white/10 hover:bg-white/15 text-white border border-white/10 hover:border-white/25 text-sm font-mono-jb px-5 py-2 rounded-md ${btnBase}`}
+            >
               Learn More
             </button>
           </div>
@@ -574,9 +685,9 @@ function ConnectedSection() {
             {checks.map((c, i) => (
               <li
                 key={i}
-                className="flex items-start gap-2.5 text-white/65 font-mono-jb text-[12px]"
+                className="group flex items-start gap-2.5 text-white/65 hover:text-white/90 transition-colors duration-200 font-mono-jb text-[12px]"
               >
-                <CircleCheck className="w-4 h-4 text-white/40 shrink-0 mt-0.5" />
+                <CircleCheck className="w-4 h-4 text-white/40 group-hover:text-orange-400 transition-colors duration-200 shrink-0 mt-0.5" />
                 {c}
               </li>
             ))}
@@ -589,12 +700,12 @@ function ConnectedSection() {
             {grid.map((g, i) => (
               <div
                 key={i}
-                className={`aspect-square rounded-lg border border-white/10 flex items-center justify-center font-mono-jb text-[11px] ${
+                className={`aspect-square rounded-lg border border-white/10 flex items-center justify-center font-mono-jb text-[11px] cursor-default transition-all duration-300 hover:-translate-y-1 ${
                   g.center
-                    ? "bg-white text-black font-bold shadow-[0_0_30px_rgba(255,255,255,0.25)] ring-1 ring-white"
+                    ? "bg-white text-black font-bold ring-1 ring-white hub-pulse"
                     : g.c?.includes("bg-white")
-                      ? "bg-white text-black"
-                      : `bg-white/[0.03] ${g.c}`
+                      ? "bg-white text-black hover:shadow-lg"
+                      : `bg-white/[0.03] ${g.c} hover:bg-white/[0.07] hover:border-white/25`
                 }`}
               >
                 {g.center ? "◧ Kovo" : g.name}
@@ -602,7 +713,7 @@ function ConnectedSection() {
             ))}
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -639,8 +750,11 @@ function Footer() {
           <p className="mt-3 text-white/45 font-mono-jb text-sm">
             Smarter primary care with AI
           </p>
-          <button className="mt-5 inline-flex items-center gap-2 bg-white/[0.06] hover:bg-white/10 border border-white/10 text-white text-[13px] font-mono-jb px-4 py-2 rounded-md transition-colors">
-            Get Started <ArrowRight className="w-3.5 h-3.5" />
+          <button
+            className={`mt-5 inline-flex items-center gap-2 bg-white/[0.06] hover:bg-white/10 border border-white/10 hover:border-white/25 text-white text-[13px] font-mono-jb px-4 py-2 rounded-md group ${btnBase}`}
+          >
+            Get Started{" "}
+            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
           </button>
         </div>
 
@@ -657,7 +771,7 @@ function Footer() {
                 <li key={it}>
                   <a
                     href="#"
-                    className="font-mono-jb text-[13px] text-white/45 hover:text-white transition-colors"
+                    className="inline-block font-mono-jb text-[13px] text-white/45 hover:text-white transition-all duration-200 hover:translate-x-1"
                   >
                     {it}
                   </a>
@@ -689,28 +803,28 @@ function Footer() {
           <a
             href="#"
             aria-label="Website"
-            className="hover:text-white transition-colors"
+            className="inline-block transition-all duration-200 hover:text-white hover:-translate-y-0.5 hover:scale-110"
           >
             <GlobeIcon />
           </a>
           <a
             href="#"
             aria-label="X"
-            className="hover:text-white transition-colors"
+            className="inline-block transition-all duration-200 hover:text-white hover:-translate-y-0.5 hover:scale-110"
           >
             <XIcon />
           </a>
           <a
             href="#"
             aria-label="Instagram"
-            className="hover:text-white transition-colors"
+            className="inline-block transition-all duration-200 hover:text-white hover:-translate-y-0.5 hover:scale-110"
           >
             <InstagramIcon />
           </a>
           <a
             href="#"
             aria-label="LinkedIn"
-            className="hover:text-white transition-colors"
+            className="inline-block transition-all duration-200 hover:text-white hover:-translate-y-0.5 hover:scale-110"
           >
             <LinkedInIcon />
           </a>
