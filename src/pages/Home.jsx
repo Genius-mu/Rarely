@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Network,
   Users,
@@ -108,11 +108,24 @@ const Fonts = () => (
     }
     .hub-pulse { animation: hubPulse 3s ease-in-out infinite; }
 
+    /* hero aurora + ridge */
+    @keyframes auroraPulse {
+      0%,100% { opacity: 0.82; transform: scale(1); }
+      50%     { opacity: 1;    transform: scale(1.05); }
+    }
+    .aurora-pulse { animation: auroraPulse 9s ease-in-out infinite; transform-origin: center 60%; }
+
+    @keyframes ridgeShift {
+      0%,100% { transform: translateX(-1.5%); }
+      50%     { transform: translateX(1.5%); }
+    }
+    .ridge-shift { animation: ridgeShift 16s ease-in-out infinite; }
+
     ::selection { background: #ff5722; color: #000; }
 
     @media (prefers-reduced-motion: reduce) {
       .reveal, .hero-in { animation: none !important; opacity: 1 !important; transform: none !important; }
-      .animate-marquee, .floaty, .hub-pulse { animation: none !important; }
+      .animate-marquee, .floaty, .hub-pulse, .aurora-pulse, .ridge-shift { animation: none !important; }
     }
   `}</style>
 );
@@ -154,14 +167,21 @@ const btnBase =
 /* ------------------------------------------------------------------ */
 /*  Small helpers                                                      */
 /* ------------------------------------------------------------------ */
-const ChartLabel = ({ children, className = "" }) => (
+const ChartLabel = ({ children, className = "", lineH = 90 }) => (
   <div
-    className={`absolute flex flex-col items-center text-white/55 transition-colors duration-300 hover:text-white/90 ${className}`}
+    className={`group absolute flex flex-col items-center text-white/55 transition-colors duration-300 hover:text-white ${className}`}
   >
     <span className="text-[10px] sm:text-[11px] font-mono-jb tracking-wide whitespace-nowrap mb-1">
       {children}
     </span>
-    <ArrowUp className="w-3 h-3 text-white/40" strokeWidth={1.5} />
+    <ArrowUp
+      className="w-3 h-3 text-white/45 group-hover:text-white transition-colors"
+      strokeWidth={1.5}
+    />
+    <div
+      className="w-px bg-gradient-to-b from-white/30 to-transparent mt-1 transition-all duration-300 group-hover:from-orange-300/70"
+      style={{ height: lineH }}
+    />
   </div>
 );
 
@@ -172,41 +192,71 @@ const navItems = ["Home", "Pricing", "About Us", "Resources", "Case Studies"];
 /* ------------------------------------------------------------------ */
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#080606] border border-white/5 rounded-sm">
+    <section className="relative overflow-hidden bg-[#080606] border border-white/5 rounded-sm min-h-[760px] flex flex-col">
       {/* atmospheric red/orange gradient field */}
       <div className="pointer-events-none absolute inset-0">
+        {/* core aurora glow band */}
         <div
-          className="absolute inset-x-0 top-[28%] h-[60%]"
+          className="aurora-pulse absolute inset-x-0 top-[34%] h-[52%]"
           style={{
             background:
-              "radial-gradient(120% 80% at 50% 60%, rgba(255,40,0,0.9) 0%, rgba(190,20,0,0.55) 28%, rgba(120,10,0,0.25) 50%, transparent 72%)",
+              "radial-gradient(110% 90% at 50% 55%, rgba(255,60,0,0.95) 0%, rgba(210,25,0,0.6) 26%, rgba(130,12,0,0.28) 48%, transparent 70%)",
           }}
         />
+        {/* warm side blooms */}
         <div
-          className="absolute left-[8%] top-[35%] w-[35%] h-[40%] blur-2xl"
+          className="absolute left-[4%] top-[42%] w-[40%] h-[42%] blur-3xl"
           style={{
             background:
-              "radial-gradient(circle, rgba(255,90,0,0.55), transparent 70%)",
+              "radial-gradient(circle, rgba(255,110,10,0.5), transparent 70%)",
           }}
         />
         <div
-          className="absolute right-[6%] top-[40%] w-[40%] h-[45%] blur-2xl"
+          className="absolute right-[2%] top-[46%] w-[44%] h-[46%] blur-3xl"
           style={{
             background:
-              "radial-gradient(circle, rgba(255,140,20,0.5), transparent 70%)",
+              "radial-gradient(circle, rgba(255,150,30,0.5), transparent 70%)",
           }}
         />
-        {/* dark wave overlay top */}
+
+        {/* top dark ridge — carves a wavy backlit skyline into the glow */}
+        <svg
+          className="ridge-shift absolute inset-x-0 top-[20%] w-[104%] -left-[2%] h-[40%]"
+          viewBox="0 0 1200 320"
+          preserveAspectRatio="none"
+          fill="#080606"
+        >
+          <path d="M0,0 H1200 V150 C1040,250 920,120 760,185 C620,242 500,135 360,200 C250,250 120,165 0,205 Z" />
+        </svg>
+        {/* bottom dark ridge */}
+        <svg
+          className="absolute inset-x-0 bottom-0 w-[104%] -left-[2%] h-[34%]"
+          viewBox="0 0 1200 240"
+          preserveAspectRatio="none"
+          fill="#080606"
+        >
+          <path d="M0,240 H1200 V70 C1060,10 930,120 770,70 C640,30 520,110 380,70 C250,33 120,105 0,60 Z" />
+        </svg>
+
+        {/* solid edge fades */}
         <div
-          className="absolute inset-x-0 top-0 h-[45%]"
+          className="absolute inset-x-0 top-0 h-[34%]"
           style={{
-            background: "linear-gradient(to bottom, #080606 30%, transparent)",
+            background: "linear-gradient(to bottom, #080606 35%, transparent)",
           }}
         />
         <div
-          className="absolute inset-x-0 bottom-0 h-[20%]"
+          className="absolute inset-x-0 bottom-0 h-[16%]"
           style={{
-            background: "linear-gradient(to top, #080606 20%, transparent)",
+            background: "linear-gradient(to top, #080606 25%, transparent)",
+          }}
+        />
+        {/* vignette */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(120% 120% at 50% 45%, transparent 55%, rgba(0,0,0,0.55) 100%)",
           }}
         />
       </div>
@@ -236,29 +286,10 @@ function Hero() {
         </button>
       </header>
 
-      {/* labels scattered like a chart */}
-      <div className="relative z-10 hidden sm:block">
-        <ChartLabel className="left-[7%] top-[110px]">Reports</ChartLabel>
-        <ChartLabel className="right-[8%] top-[105px]">Analytics</ChartLabel>
-        <ChartLabel className="left-[12%] top-[330px]">Dashboard</ChartLabel>
-        <ChartLabel className="left-[22%] top-[360px]">Projects</ChartLabel>
-        <ChartLabel className="left-[31%] top-[345px]">Tasks</ChartLabel>
-        <ChartLabel className="left-[38%] top-[360px]">Teams</ChartLabel>
-        <ChartLabel className="left-[45%] top-[330px]">Automation</ChartLabel>
-        <ChartLabel className="left-[17%] top-[388px]">Integrations</ChartLabel>
-        <ChartLabel className="left-[26%] top-[410px]">Calendar</ChartLabel>
-        <ChartLabel className="left-[33%] top-[440px]">
-          Notifications
-        </ChartLabel>
-        <ChartLabel className="left-[41%] top-[388px]">Insights</ChartLabel>
-        <ChartLabel className="left-[49%] top-[425px]">Security</ChartLabel>
-        <ChartLabel className="left-[10%] top-[405px]">Files</ChartLabel>
-      </div>
-
-      {/* HERO COPY */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 pt-16 pb-40 sm:pt-20 sm:pb-56">
+      {/* HERO COPY — sits in the upper band, above the ridge */}
+      <div className="relative z-20 flex flex-col items-center text-center px-6 pt-14 sm:pt-16">
         <h1
-          className="hero-in font-mono-jb text-white text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.12] tracking-tight"
+          className="hero-in font-mono-jb text-white text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.12] tracking-tight [text-shadow:0_2px_30px_rgba(0,0,0,0.6)]"
           style={{ animationDelay: "0.05s" }}
         >
           Your Work.
@@ -268,7 +299,7 @@ function Hero() {
           Zero Chaos.
         </h1>
         <p
-          className="hero-in mt-6 text-white/60 font-mono-jb text-sm sm:text-[15px] max-w-md leading-relaxed"
+          className="hero-in mt-6 text-white/65 font-mono-jb text-sm sm:text-[15px] max-w-md leading-relaxed"
           style={{ animationDelay: "0.2s" }}
         >
           One simple platform to manage your team, tasks, and workflows — all in
@@ -279,15 +310,65 @@ function Hero() {
           style={{ animationDelay: "0.35s" }}
         >
           <button
-            className={`bg-white hover:bg-white/90 text-black text-sm font-mono-jb px-6 py-2.5 rounded-md hover:shadow-lg hover:shadow-white/10 ${btnBase}`}
+            className={`bg-white hover:bg-white/90 text-black text-sm font-mono-jb px-6 py-2.5 rounded-md hover:shadow-lg hover:shadow-orange-500/20 ${btnBase}`}
           >
             Get Started
           </button>
           <button
-            className={`bg-white/10 hover:bg-white/15 text-white border border-white/10 hover:border-white/25 text-sm font-mono-jb px-6 py-2.5 rounded-md ${btnBase}`}
+            className={`bg-white/10 hover:bg-white/15 text-white border border-white/15 hover:border-white/30 text-sm font-mono-jb px-6 py-2.5 rounded-md backdrop-blur ${btnBase}`}
           >
             Learn More
           </button>
+        </div>
+      </div>
+
+      {/* CHART LABEL SKYLINE — lower band, ticks descend into the glow */}
+      <div className="relative z-10 hidden sm:block flex-1">
+        <div className="absolute inset-x-0 top-[42%] bottom-0">
+          <ChartLabel className="left-[6%] top-[2%]" lineH={70}>
+            Reports
+          </ChartLabel>
+          <ChartLabel className="left-[87%] top-0" lineH={64}>
+            Analytics
+          </ChartLabel>
+          <ChartLabel className="left-[94%] top-[34%]" lineH={48}>
+            Tracking
+          </ChartLabel>
+
+          <ChartLabel className="left-[13%] top-[30%]" lineH={104}>
+            Dashboard
+          </ChartLabel>
+          <ChartLabel className="left-[24%] top-[44%]" lineH={86}>
+            Projects
+          </ChartLabel>
+          <ChartLabel className="left-[33%] top-[26%]" lineH={120}>
+            Tasks
+          </ChartLabel>
+          <ChartLabel className="left-[42%] top-[44%]" lineH={84}>
+            Teams
+          </ChartLabel>
+          <ChartLabel className="left-[51%] top-[24%]" lineH={118}>
+            Automation
+          </ChartLabel>
+
+          <ChartLabel className="left-[9%] top-[54%]" lineH={60}>
+            Files
+          </ChartLabel>
+          <ChartLabel className="left-[19%] top-[62%]" lineH={52}>
+            Integrations
+          </ChartLabel>
+          <ChartLabel className="left-[28%] top-[72%]" lineH={42}>
+            Calendar
+          </ChartLabel>
+          <ChartLabel className="left-[37%] top-[82%]" lineH={34}>
+            Notifications
+          </ChartLabel>
+          <ChartLabel className="left-[47%] top-[60%]" lineH={64}>
+            Insights
+          </ChartLabel>
+          <ChartLabel className="left-[57%] top-[50%]" lineH={78}>
+            Security
+          </ChartLabel>
         </div>
       </div>
     </section>
