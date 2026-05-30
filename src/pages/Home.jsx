@@ -10,7 +10,7 @@ import {
   LayoutGrid,
   Folder,
   ArrowUp,
-//   ArrowRight,
+  //   ArrowRight,
   Code2,
   Sparkles,
 } from "lucide-react";
@@ -191,8 +191,6 @@ const ChartLabel = ({ children, className = "", lineH = 90 }) => (
     />
   </div>
 );
-
-
 
 /* ------------------------------------------------------------------ */
 /*  HERO                                                               */
@@ -788,7 +786,6 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#1c1c1c]">
       <Fonts />
-      {/* <SiteHeader /> */}
       <div>
         <Hero />
         <TrustedBy />
@@ -797,7 +794,6 @@ export default function LandingPage() {
         <ExistingStack />
         <HowItWorks />
         <ConnectedSection />
-        {/* <Footer /> */}
       </div>
     </div>
   );
