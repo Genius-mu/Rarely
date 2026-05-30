@@ -684,11 +684,11 @@ function HowItWorks() {
               <Reveal key={i}>
                 <div className="group relative">
                   <span className="absolute -left-[26px] top-3 w-2 h-2 rounded-full bg-white transition-all duration-300 group-hover:scale-150 group-hover:bg-orange-400 group-hover:shadow-[0_0_10px_rgba(251,146,60,0.8)]" />
-                  <div className="bg-white rounded-md p-5 shadow-xl transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl group-hover:ring-1 group-hover:ring-orange-400/40">
+                  <div className="bg-white/10 backdrop-blur-3xl rounded-md p-5 shadow-xl transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl group-hover:ring-1 group-hover:ring-orange-400/40">
                     <p className="text-[10px] font-mono-jb text-orange-500 tracking-widest">
                       {s.n}
                     </p>
-                    <h3 className="mt-2 font-mono-jb text-[15px] font-semibold text-neutral-900">
+                    <h3 className="mt-2 font-mono-jb text-[15px] font-semibold text-neutral-400">
                       {s.t}
                     </h3>
                     <p className="mt-2 text-[12px] leading-relaxed text-neutral-500 font-mono-jb">
