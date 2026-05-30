@@ -879,7 +879,7 @@ function Footer() {
         </span>
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto flex items-center justify-between border-t border-white/5 pt-6">
+      <div className="relative z-10 flex items-center justify-between border-t border-white/5 pt-6">
         <div className="flex items-center gap-4 text-white/40">
           <a
             href="#"
@@ -910,7 +910,7 @@ function Footer() {
             <LinkedInIcon />
           </a>
         </div>
-        <p className="font-mono-jb text-[11px] text-white/35">
+        <p className="font-mono-jb text-[7px] sm:text-[11px] text-white/35">
           © 2026 Rarely. All Rights Reserved.
         </p>
       </div>
