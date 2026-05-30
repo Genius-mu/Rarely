@@ -698,104 +698,6 @@ function CtaBand() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  FOOTER                                                             */
-/* ------------------------------------------------------------------ */
-function Footer() {
-  const cols = [
-    {
-      title: "QUICK LINKS",
-      items: ["Features", "Use Cases", "Platform", "Integrations", "Pricing"],
-    },
-    {
-      title: "SOLUTIONS",
-      items: [
-        "Primary Care Clinics",
-        "Telemedicine",
-        "Hospitals",
-        "Health Plans",
-      ],
-    },
-    { title: "COMPANY", items: ["About", "Careers", "Blog", "Contact"] },
-  ];
-  return (
-    <footer className="relative bg-[#050404] border-x border-b border-white/5 overflow-hidden pt-20 pb-10 px-6 sm:px-12">
-      <div className="relative z-10 max-w-5xl mx-auto grid md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="font-pixel text-orange-500 text-sm">R</span>
-            <span className="font-mono-jb text-white text-lg">arely</span>
-          </div>
-          <p className="mt-3 text-white/45 font-mono-jb text-sm">
-            Smarter primary care with AI
-          </p>
-          <button
-            className={`mt-5 inline-flex items-center gap-2 bg-white/[0.06] hover:bg-white/10 border border-white/10 hover:border-white/25 text-white text-[13px] font-mono-jb px-4 py-2 rounded-md group ${btnBase}`}
-          >
-            Get Started{" "}
-            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
-          </button>
-        </div>
-        {cols.map((col) => (
-          <div key={col.title}>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-3.5 h-3.5 rounded-sm bg-orange-500/80" />
-              <h4 className="font-mono-jb text-[11px] tracking-widest text-white/80">
-                {col.title}
-              </h4>
-            </div>
-            <ul className="space-y-2.5">
-              {col.items.map((it) => (
-                <li key={it}>
-                  <a
-                    href="#"
-                    className="inline-block font-mono-jb text-[13px] text-white/45 hover:text-white transition-all duration-200 hover:translate-x-1"
-                  >
-                    {it}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="relative z-10 mt-16 mb-8 flex justify-center">
-        <span className="font-pixel text-5xl sm:text-7xl md:text-8xl leading-none select-none">
-          <span
-            style={{
-              background: "linear-gradient(135deg,#ff7a2f,#ff2d00)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            R
-          </span>
-          <span className="text-white/12">arely</span>
-        </span>
-      </div>
-
-      <div className="relative z-10 max-w-5xl mx-auto flex items-center justify-between border-t border-white/5 pt-6">
-        <div className="flex items-center gap-4 text-white/40">
-          {[GlobeIcon, XIcon, InstagramIcon, LinkedInIcon].map((Ic, i) => (
-            <a
-              key={i}
-              href="#"
-              aria-label="social"
-              className="inline-block transition-all duration-200 hover:text-white hover:-translate-y-0.5 hover:scale-110"
-            >
-              <Ic />
-            </a>
-          ))}
-        </div>
-        <p className="font-mono-jb text-[11px] text-white/35">
-          © 2026 Rarely. All Rights Reserved.
-        </p>
-      </div>
-    </footer>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /*  PAGE                                                               */
 /* ------------------------------------------------------------------ */
 export default function PricingPage() {
@@ -810,7 +712,6 @@ export default function PricingPage() {
         <ComparisonTable />
         <FAQ />
         <CtaBand />
-        <Footer />
       </div>
     </div>
   );
