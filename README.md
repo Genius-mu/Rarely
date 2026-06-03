@@ -1,16 +1,63 @@
-# React + Vite
+# Rarely — Calm Work, One Surface
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + Vite single-page application (SPA) for a multi-page marketing site.
 
-Currently, two official plugins are available:
+## Tech stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React** (v19)
+- **Vite** (build/dev tooling)
+- **React Router** (`react-router-dom`) for client-side routing
+- **Tailwind CSS** (via `@tailwindcss/vite`)
+- **Lucide / React Icons** for UI icons
 
-## React Compiler
+## Routes / pages
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The app is wired in `src/App.jsx`:
 
-## Expanding the ESLint configuration
+- `/` → Home (landing)
+- `/home` → Home
+- `/pricing` → Pricing
+- `/aboutus` → About
+- `/resources` → Resources
+- `/casestudies` → Case Studies
+- `/*` → Not Found
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## Lint
+
+```bash
+npm run lint
+```
+
+## Preview production build
+
+```bash
+npm run preview
+```
+
+## Deployment (Vercel)
+
+This project includes `vercel.json` with a catch-all rewrite so SPA routes work correctly:
+
+- `rewrites`: `/(.*)` → `/`
+
+That means paths like `/pricing` and `/resources` are served by the SPA entry (`index.html`) and handled by `react-router-dom`.
+
+## Project structure
+
+- `src/pages/`: page-level route components (`Home.jsx`, `PricingPage.jsx`, `ResourcesPage.jsx`, `CaseStudiesPage.jsx`, `AboutPage.jsx`, `NotFoundPage.jsx`)
+- `src/components/`: shared layout components (`Header.jsx`, `Footer.jsx`)
+- `src/App.jsx`: route definitions
+- `src/main.jsx`: app bootstrap (router + header/footer)
